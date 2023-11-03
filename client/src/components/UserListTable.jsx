@@ -4,10 +4,15 @@ import * as userService from "../services/userService";
 
 import UserItem from "./UserItem";
 import CreateUserModal from "./CreateUserModal";
+import UserInfoModal from "./UserInfoModal";
+import UserDeleteModal from "./UserDeleteModal";
 
 const UserListTable = () => {
   const [users, setUsers] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showDelete, setShowDelete] = useState(false);
 
   useEffect(() => {
     userService
@@ -39,6 +44,27 @@ const UserListTable = () => {
 
     // Close the modal
     setShowCreate(false);
+  };
+
+  const userInfoClickHandler = async (userId) => {
+    setSelectedUser(userId);
+    setShowInfo(true);
+  };
+
+  const deleteUserClickHandler = async (userId) => {
+    setSelectedUser(userId);
+    setShowDelete(true);
+  };
+
+  const deleteUserHandler = async (userId) => {
+    // Remove user from server
+    const result = await userService.remove(selectedUser);
+
+    // Remove user from state
+    setUsers((state) => state.filter((user) => user._id !== selectedUser));
+
+    // Close the delete modal
+    setShowDelete(false);
   };
 
   return (
@@ -151,14 +177,31 @@ const UserListTable = () => {
           {users.map((user) => (
             <UserItem
               key={user._id}
+              userId={user._id}
               createdAt={user.createdAt}
               email={user.email}
               firstName={user.firstName}
               lastName={user.lastName}
               imageUrl={user.imageUrl}
               phoneNumber={user.phoneNumber}
+              onUserInfoClick={userInfoClickHandler}
+              onDeleteClick={deleteUserClickHandler}
             />
           ))}
+
+          {showInfo && (
+            <UserInfoModal
+              onClose={() => setShowInfo(false)}
+              userId={selectedUser}
+            />
+          )}
+
+          {showDelete && (
+            <UserDeleteModal
+              onClose={() => setShowDelete(false)}
+              onDelete={deleteUserHandler}
+            />
+          )}
         </tbody>
       </table>
 

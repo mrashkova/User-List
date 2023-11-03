@@ -8,7 +8,16 @@ const UserItem = ({
   phoneNumber,
   createdAt,
   imageUrl,
+  onUserInfoClick,
+  onDeleteClick,
 }) => {
+  const infoClickHandler = () => {
+    onUserInfoClick(userId);
+  };
+
+  const deleteClickHandler = () => {
+    onDeleteClick(userId);
+  };
   return (
     <tr>
       <td>
@@ -41,7 +50,7 @@ const UserItem = ({
         <button
           className="btn delete-btn"
           title="Delete"
-          // onClick={deleteClickHandler}
+          onClick={deleteClickHandler}
         >
           <svg
             aria-hidden="true"
@@ -62,7 +71,7 @@ const UserItem = ({
         <button
           className="btn info-btn"
           title="Info"
-          // onClick={infoClickHandler}
+          onClick={infoClickHandler}
         >
           <svg
             aria-hidden="true"
